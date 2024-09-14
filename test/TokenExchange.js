@@ -112,6 +112,7 @@ describe("TokenExchange", function () {
       await tokenExchange.deposit({ value: ethAmount });
 
       const ownerTokenBalance = await mockToken.balanceOf(owner.address);
+      const proxyBalance = await ethers.provider.getBalance(tokenExchangeAddress);
 
       await expect(tokenExchange.withdraw(ethAmount, tokenAmount))
         .to.emit(tokenExchange, "Withdrawal")
@@ -119,6 +120,10 @@ describe("TokenExchange", function () {
 
       const ownerTokenBalanceAfter = await mockToken.balanceOf(owner.address);
       expect(ownerTokenBalanceAfter - ownerTokenBalance).to.equal(tokenAmount);
+
+      const proxyBalanceAfter = await ethers.provider.getBalance(tokenExchangeAddress);
+      expect(proxyBalance - proxyBalanceAfter).to.equal(ethAmount);
+
     });
 
     it("Should revert if non-owner tries to withdraw", async function () {
