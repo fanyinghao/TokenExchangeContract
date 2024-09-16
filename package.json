@@ -3,8 +3,9 @@
   "scripts": {
     "test": "hardhat test",
     "coverage": "hardhat coverage --temp artifacts/contracts",
-    "deploy": "hardhat run scripts/deploy.js --network sepolia --verify",
-    "update": "hardhat run scripts/upgrade.js --network sepolia"
+    "deploy": "hardhat run scripts/deploy.js --network sepolia",
+    "update": "hardhat run scripts/upgrade.js --network sepolia",
+    "verify": "hardhat verify --network sepolia"
   },
   "dependencies": {
     "@chainlink/contracts": "^1.2.0",
