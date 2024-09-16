@@ -39,7 +39,7 @@ contract TokenExchange is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         _handleDeposit();  // Handle the deposit first
 
         uint256 price = getLatestPrice();
-        uint256 ethAmount = msg.value; // 获取用户发送的ETH数量
+        uint256 ethAmount = msg.value; // caller sending ETH amount
         uint256 tokenAmount =  price * ethAmount / 1 ether;
 
         require(token.balanceOf(address(this)) >= tokenAmount, "Insufficient Token balance");
@@ -49,27 +49,26 @@ contract TokenExchange is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         emit Swap(msg.sender, ethAmount, tokenAmount);
     }
 
-    // 合约所有者提取ETH和Token
     function withdraw(uint256 ethAmount, uint256 tokenAmount) external onlyOwner {
-        // 确保合约中的ETH余额足够
+        // ensure enough ETH on contract
         require(address(this).balance >= ethAmount, "Insufficient ETH balance");
-        // 确保合约中的Token余额足够
+        // ensure enough Token balance on contract
         require(token.balanceOf(address(this)) >= tokenAmount, "Insufficient Token balance");
 
-        // 将ETH转账给合约所有者
+        // transfer ETH to owner
         payable(owner()).transfer(ethAmount);
-        // 将USDC转账给合约所有者
+        // transfer token to owner
         token.safeTransfer(owner(), tokenAmount);
 
-        // 触发提取事件，记录提取金额
+        // emit withraw event with amount
         emit Withdrawal(owner(), ethAmount, tokenAmount);
     }
 
     function getLatestPrice() public view returns (uint256) {
-        (,int256 price,,,) = priceFeed.latestRoundData(); // 获取ETH/USD的最新价格
+        (,int256 price,,,) = priceFeed.latestRoundData(); // retrieve latest ETH price
 
         require(price > 0, "Invalid price feed");
-        return uint256(price * 10 ** 10); // 将价格从8位小数转换为18位小数
+        return uint256(price * 10 ** 10); // convert price decimals into 18 from 8, price feed decimals of ETH/USDC is 8
     }
 
     receive() external payable {
