@@ -6,6 +6,7 @@ Try running some of the following tasks:
 ```shell
 npm run test
 npm run deploy
+npm run verify PROXY_ADDRESS
 ```
 
 ## Environment Variables
